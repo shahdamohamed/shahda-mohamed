@@ -1,509 +1,661 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Portfolio</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="mediaqueries.css" />
-  </head>
-  <body>
-    <nav id="desktop-nav">
-      <div class="logo">Shahda Mohamed</div>
-      <div>
-        <ul class="nav-links">
-          <li><a href="#about">About</a></li>
-          <li><a href="#experience">Experience</a></li>
-          <li><a href="#projects">Projects</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shahda Mohamed — Backend Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F6F5F1;
+    --surface:#FFFFFF;
+    --ink:#14171A;
+    --ink-soft:#5B6168;
+    --line:#DDDAD1;
+    --accent:#1F6F5C;
+    --accent-soft:#E4EDE9;
+    --accent-ink:#16504333;
+    --warn:#A8721E;
+    --warn-soft:#F3E9D9;
+    --code-bg:#11151A;
+    --code-text:#D9E6E1;
+    --code-key:#7FBFAE;
+    --code-string:#E2C08D;
+    --radius:6px;
+    --font-display:'Space Grotesk',sans-serif;
+    --font-body:'Inter',sans-serif;
+    --font-mono:'JetBrains Mono',monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    line-height:1.55;
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+
+  a{color:inherit;text-decoration:none;}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px;}
+
+  /* ---------- Layout shell ---------- */
+  .shell{
+    display:grid;
+    grid-template-columns:240px 1fr;
+    max-width:1240px;
+    margin:0 auto;
+  }
+  @media (max-width: 880px){
+    .shell{grid-template-columns:1fr;}
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    position:sticky;
+    top:0;
+    align-self:start;
+    height:100vh;
+    padding:28px 20px;
+    border-right:1px solid var(--line);
+    display:flex;
+    flex-direction:column;
+    gap:28px;
+  }
+  @media (max-width: 880px){
+    .sidebar{
+      position:relative;
+      height:auto;
+      border-right:none;
+      border-bottom:1px solid var(--line);
+      flex-direction:row;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .nav-list{display:none;}
+    .nav-list.open{display:flex;}
+  }
+
+  .brand{
+    font-family:var(--font-mono);
+    font-size:13px;
+    color:var(--ink-soft);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  /* ===== EDIT HERE: small avatar in the sidebar (optional) =====
+     Replace src below with your own filename. If you don't want
+     a photo here, delete the <img> tag and the .dot span will show instead. */
+  .brand img{
+    width:24px;height:24px;border-radius:50%;
+    object-fit:cover;
+    border:1px solid var(--line);
+  }
+
+  .nav-list{
+    list-style:none;
+    margin:0;padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    font-family:var(--font-mono);
+    font-size:13px;
+  }
+  .nav-list a{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 10px;
+    border-radius:var(--radius);
+    color:var(--ink-soft);
+  }
+  .nav-list a:hover{background:var(--surface); color:var(--ink);}
+  .method{
+    font-size:10px;
+    font-weight:600;
+    padding:1px 6px;
+    border-radius:4px;
+    letter-spacing:0.03em;
+  }
+  .method.get{background:var(--accent-soft); color:var(--accent);}
+  .method.post{background:var(--warn-soft); color:var(--warn);}
+
+  .menu-toggle{
+    display:none;
+    font-family:var(--font-mono);
+    font-size:13px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:6px 10px;
+    cursor:pointer;
+  }
+  @media (max-width:880px){ .menu-toggle{display:inline-flex;} }
+
+  .sidebar-foot{
+    margin-top:auto;
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--ink-soft);
+  }
+  @media (max-width:880px){ .sidebar-foot{display:none;} }
+
+  /* ---------- Main ---------- */
+  main{padding:0 28px 80px;}
+  @media (max-width:880px){ main{padding:0 18px 60px;} }
+
+  section{padding:64px 0; border-bottom:1px solid var(--line);}
+  section:last-of-type{border-bottom:none;}
+
+  .endpoint-tag{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-bottom:14px;
+  }
+  .endpoint-tag .path{color:var(--ink);}
+
+  h2{
+    font-family:var(--font-display);
+    font-size:clamp(24px,3vw,32px);
+    margin:0 0 22px;
+    letter-spacing:-0.01em;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{padding-top:48px;}
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.05fr 1fr;
+    gap:48px;
+    align-items:center;
+  }
+  @media (max-width:880px){ .hero-grid{grid-template-columns:1fr; gap:32px;} }
+
+  .status-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--accent);
+    background:var(--accent-soft);
+    border-radius:99px;
+    padding:6px 12px;
+    margin-bottom:22px;
+  }
+  .status-pill .pulse{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--accent);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 var(--accent-ink);}
+    70%{box-shadow:0 0 0 6px transparent;}
+    100%{box-shadow:0 0 0 0 transparent;}
+  }
+
+  h1{
+    font-family:var(--font-display);
+    font-size:clamp(36px,5.4vw,58px);
+    line-height:1.05;
+    margin:0 0 18px;
+    letter-spacing:-0.015em;
+  }
+  h1 .accent{color:var(--accent);}
+
+  .hero-sub{
+    font-size:17px;
+    color:var(--ink-soft);
+    max-width:480px;
+    margin:0 0 28px;
+  }
+
+  .hero-actions{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:36px;}
+  .btn{
+    font-family:var(--font-mono);
+    font-size:13px;
+    padding:11px 18px;
+    border-radius:var(--radius);
+    border:1px solid var(--ink);
+    transition:transform .15s ease, background .15s ease, color .15s ease;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+  }
+  .btn.primary{background:var(--ink); color:var(--bg);}
+  .btn.primary:hover{background:var(--accent); border-color:var(--accent); transform:translateY(-1px);}
+  .btn.ghost{background:transparent; color:var(--ink); border-color:var(--line);}
+  .btn.ghost:hover{border-color:var(--ink); transform:translateY(-1px);}
+
+  .metrics{display:flex; gap:28px; flex-wrap:wrap;}
+  .metric .num{font-family:var(--font-display); font-size:26px; font-weight:600;}
+  .metric .label{font-family:var(--font-mono); font-size:11px; color:var(--ink-soft);}
+
+  /* ---------- Terminal ---------- */
+  .terminal{
+    background:var(--code-bg);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 18px 40px -16px rgba(20,23,26,0.35);
+  }
+  .terminal-head{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:11px 14px;
+    background:#1A1F24;
+    border-bottom:1px solid #232a30;
+  }
+  .terminal-head span{width:9px;height:9px;border-radius:50%; display:inline-block;}
+  .dot-r{background:#E5645B;} .dot-y{background:#E5B85B;} .dot-g{background:#5BBF8A;}
+  .terminal-title{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:#7d8790;
+    margin-left:6px;
+  }
+  .terminal-body{
+    padding:20px 18px 24px;
+    font-family:var(--font-mono);
+    font-size:13px;
+    color:var(--code-text);
+    min-height:230px;
+  }
+  .terminal-body .line{margin:0 0 10px; white-space:pre-wrap; word-break:break-word;}
+  .prompt{color:#7d8790;}
+  .cmd{color:#EDEDED;}
+  .out-key{color:var(--code-key);}
+  .out-string{color:var(--code-string);}
+  .cursor{
+    display:inline-block; width:7px; height:14px;
+    background:var(--code-key);
+    vertical-align:middle;
+    animation:blink 1s steps(1) infinite;
+  }
+  @keyframes blink{50%{opacity:0;}}
+
+  /* ---------- About ---------- */
+  .about-grid{display:grid; grid-template-columns:1.3fr 1fr; gap:40px;}
+  @media (max-width:880px){ .about-grid{grid-template-columns:1fr;} }
+  .about-grid p{color:var(--ink-soft); margin:0 0 16px; max-width:560px;}
+  .response-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:18px 20px;
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    color:var(--ink-soft);
+  }
+  .response-card .resp-status{color:var(--accent); font-weight:600; margin-bottom:14px; display:block;}
+
+  /* ===== EDIT HERE: this is your main profile photo =====
+     Replace src="assets/profile.jpg" with your own image path. */
+  .avatar-frame{
+    width:150px; height:150px;
+    border-radius:50%;
+    overflow:hidden;
+    margin:0 auto 18px;
+    border:3px solid var(--accent-soft);
+  }
+  .avatar-frame img{width:100%; height:100%; object-fit:cover; display:block;}
+
+  .kv{display:flex; justify-content:space-between; gap:12px; padding:7px 0; border-bottom:1px dashed var(--line);}
+  .kv:last-child{border-bottom:none;}
+  .kv .k{color:var(--ink-soft);}
+  .kv .v{color:var(--ink); text-align:right;}
+
+  /* ---------- Experience timeline ---------- */
+  .timeline{display:flex; flex-direction:column;}
+  .tl-item{
+    display:grid;
+    grid-template-columns:140px 1fr;
+    gap:24px;
+    padding:22px 0;
+    border-top:1px solid var(--line);
+  }
+  .tl-item:first-child{border-top:none;}
+  @media (max-width:600px){ .tl-item{grid-template-columns:1fr; gap:6px;} }
+  .tl-period{font-family:var(--font-mono); font-size:12px; color:var(--ink-soft); padding-top:3px;}
+  .tl-role{font-family:var(--font-display); font-size:18px; margin:0 0 4px;}
+  .tl-org{font-size:13px; color:var(--accent); font-family:var(--font-mono); margin-bottom:10px;}
+  .tl-desc{color:var(--ink-soft); margin:0; max-width:640px; font-size:14.5px;}
+
+  /* ---------- Skills ---------- */
+  .skills-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+  }
+  .skill-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:18px;
+  }
+  .skill-card h3{
+    font-family:var(--font-mono);
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--ink-soft);
+    margin:0 0 12px;
+  }
+  .skill-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:7px 0; border-bottom:1px dashed var(--line);
+    font-size:13.5px;
+  }
+  .skill-row:last-child{border-bottom:none;}
+  .level{
+    font-family:var(--font-mono); font-size:10.5px; font-weight:600;
+    padding:2px 8px; border-radius:4px;
+  }
+  .level.exp{background:var(--accent-soft); color:var(--accent);}
+  .level.mid{background:var(--warn-soft); color:var(--warn);}
+  .level.basic{background:#EFEFEC; color:var(--ink-soft);}
+
+  /* ---------- Projects ---------- */
+  /* ===== EDIT HERE: to ADD a project, copy one whole
+     <div class="project-card"> ... </div> block below and
+     change the text inside it. To DELETE a project, delete
+     its whole <div class="project-card"> ... </div> block. */
+  .projects-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px;}
+  .project-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .project-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+  .project-card h3{font-family:var(--font-display); font-size:18px; margin:0;}
+  .status-code{
+    font-family:var(--font-mono); font-size:11px; font-weight:600;
+    padding:3px 8px; border-radius:4px;
+    background:var(--accent-soft); color:var(--accent);
+    white-space:nowrap;
+  }
+  .project-card p{color:var(--ink-soft); font-size:14px; margin:0; flex-grow:1;}
+  .project-meta{
+    display:flex; justify-content:space-between;
+    font-family:var(--font-mono); font-size:11.5px; color:var(--ink-soft);
+    border-top:1px dashed var(--line); padding-top:12px;
+  }
+  .project-meta a{color:var(--accent);}
+
+  /* ---------- Contact ---------- */
+  .contact-grid{display:grid; grid-template-columns:1fr 1fr; gap:48px;}
+  @media (max-width:880px){ .contact-grid{grid-template-columns:1fr; gap:30px;} }
+  .contact-info p{color:var(--ink-soft); margin:0 0 22px; max-width:380px;}
+  .contact-links{display:flex; flex-direction:column; gap:10px; font-family:var(--font-mono); font-size:13.5px;}
+  .contact-links a{display:inline-flex; align-items:center; gap:8px;}
+  .contact-links a:hover{color:var(--accent);}
+
+  footer{
+    padding:26px 0 10px;
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--ink-soft);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+      <div class="brand">
+        <!-- EDIT: small avatar, optional. Swap src or delete the img tag. -->
+        <img src="assets/profile.jpeg" alt="Shahda Mohamed">
+        shahda-mohamed.dev
       </div>
-      <div class="theme-toggle">
-        <button id="theme-toggle-btn" onclick="toggleTheme()">🌙</button>
-      </div>
-    </nav>
-    <nav id="hamburger-nav">
-      <div class="logo">Shahda Mohamed</div>
-      <div class="hamburger-menu">
-        <div class="hamburger-icon" onclick="toggleMenu()">
-          <span></span>
-          <span></span>
-          <span></span>
+      <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="navList">menu</button>
+    </div>
+    <ul class="nav-list" id="navList">
+      <li><a href="#about"><span class="method get">GET</span> /about</a></li>
+      <li><a href="#experience"><span class="method get">GET</span> /skills</a></li>
+      <li><a href="#projects"><span class="method get">GET</span> /projects</a></li>
+      <li><a href="#contact"><span class="method post">POST</span> /contact</a></li>
+    </ul>
+    <div class="sidebar-foot">B.Sc. Computer Science<br>Benha National University</div>
+  </aside>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="hero-grid">
+        <div>
+          <div class="status-pill"><span class="pulse"></span> 200 OK · open to new roles</div>
+          <h1>Hi, I'm Shahda — a backend developer who builds <span class="accent">reliable</span> APIs.</h1>
+          <p class="hero-sub">I specialize in building efficient, scalable back-end systems with Python — using Django and FastAPI to design clean RESTful APIs, and MySQL to model reliable, well-structured data.</p>
+          <div class="hero-actions">
+            <a href="#projects" class="btn primary">View projects</a>
+            <a href="#contact" class="btn ghost">Get in touch →</a>
+            <!-- EDIT: point this at your CV file if you want a download button, e.g. href="assets/Shahda_Mohamed_CV.pdf" -->
+            <a href="assets/Shahda_Mohamed_CV.pdf" class="btn ghost" download>Download CV</a>
+          </div>
+          <div class="metrics">
+            <div class="metric"><div class="num">5+</div><div class="label">PROJECTS BUILT</div></div>
+            <div class="metric"><div class="num">6+</div><div class="label">TECHNOLOGIES USED</div></div>
+            <div class="metric"><div class="num">2026</div><div class="label">CS GRADUATE</div></div>
+          </div>
         </div>
-        <div class="menu-links">
-          <li><a href="#about" onclick="toggleMenu()">About</a></li>
-          <li><a href="#experience" onclick="toggleMenu()">Experience</a></li>
-          <li><a href="#projects" onclick="toggleMenu()">Projects</a></li>
-          <li><a href="#contact" onclick="toggleMenu()">Contact</a></li>
-        </div>
-      </div>
-      <div class="theme-toggle">
-        <button id="theme-toggle-btn-mobile" onclick="toggleTheme()">🌙</button>
-      </div>
-    </nav>
-    <section id="profile">
-      <div class="section__pic-container">
-        <img src="./assets/profile_pic.jpg" alt="shahda mohamed profile picture" />
-      </div>
-      <div class="section__text">
-        <p class="section__text__p1">Hello, I'm</p>
-        <h1 class="title">Shahda Mohamed</h1>
-        <p class="section__text__p2">Backend Developer</p>
-        <div class="btn-container">
-          <button
-            class="btn btn-color-2"
-            onclick="window.open('./assets/resume.pdf')"
-          >
-            Download CV
-          </button>
-          <button class="btn btn-color-1" onclick="location.href='./#contact'">
-            Contact Info
-          </button>
-        </div>
-        <div id="socials-container">
-          <img
-            src="./assets/linkedin.png"
-            alt="My LinkedIn profile"
-            class="icon"
-            onclick="location.href='https://www.linkedin.com/in/shahda-mohamed-178537280?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app'"
-          />
-          <img
-            src="./assets/github.png"
-            alt="My Github profile"
-            class="icon"
-            onclick="location.href='https://github.com/shahdamohamed'"
-          />
+
+        <div class="terminal">
+          <div class="terminal-head">
+            <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+            <span class="terminal-title">zsh — curl</span>
+          </div>
+          <div class="terminal-body" id="termBody"></div>
         </div>
       </div>
     </section>
+
     <section id="about">
-      <p class="section__text__p1">Get To Know More</p>
-      <h1 class="title">About Me</h1>
-      <div class="section-container">
-        <div class="section__pic-container">
-          <img
-            src="./assets/about_me.jpg"
-            alt="Profile picture"
-            class="about-pic"
-          />
+      <div class="endpoint-tag"><span class="method get">GET</span> <span class="path">/about</span></div>
+      <h2>About me</h2>
+      <div class="about-grid">
+        <div>
+          <p>I'm a backend developer with a B.Sc. in Computer Science from Benha National University, focused on designing and building reliable, well-structured APIs and data systems. My core stack is Python with Django and Django REST Framework, and I also build lightweight, high-performance services with FastAPI.</p>
+          <p>I think about a backend service end to end: how the data is modeled, how the API is shaped, and how it's secured — with maintainability always in mind, not just whether it works.</p>
+          <p>I work across the full backend lifecycle — from modeling data and designing clean, secure APIs, to building the authentication layer that protects them. I care as much about long-term maintainability as I do about a feature simply working.</p>
         </div>
-        <div class="about-details-container">
-          <div class="about-containers">
-            <div class="details-container">
-              <img
-                src="./assets/Focus_On.png"
-                alt="Experience icon"
-                class="icon"
-              />
-              <h3>Focus On</h3>
-              <p>I specialize in building efficient and scalable back-end systems using technologies like Python, Django, and MySQL. I enjoy tackling complex problems and finding creative solutions to improve user experiences.</p>
-            </div>
-            <div class="details-container">
-              <img
-                src="./assets/education.png"
-                alt="Education icon"
-                class="icon"
-              />
-              <h3>Education</h3>
-              <p>I am currently pursuing a Bachelor's degree in Computer Science at Benha National University, where I've gained hands-on experience in software development, algorithms, and data structures. My experience includes developing RESTful APIs, working with databases, and implementing security measures to protect user data.</p>
-            </div>
+        <div class="response-card">
+          <!-- EDIT: your photo on the About card -->
+          <div class="avatar-frame">
+            <img src="assets/profile.jpeg" alt="Shahda Mohamed">
           </div>
-          <div class="text-container">
-            <p>
-              Over the past year, I've been working with Django and Django REST Framework, building projects like to-do list apps, and event booking systems. I'm also learning how to integrate APIs and implement authentication systems such as JWT.<br> 
-              I'm constantly exploring new technologies and improving my skills through hands-on projects.
-              My goal is to become a professional backend developer and contribute to impactful software that makes life easier for users. When I’m not coding, you’ll find me exploring open-source projects, learning about software architecture, or helping others understand backend development concepts.
-            </p>
-          </div>
+          <span class="resp-status">200 OK — application/json</span>
+          <div class="kv"><span class="k">name</span><span class="v">Shahda Mohamed</span></div>
+          <div class="kv"><span class="k">role</span><span class="v">Backend Developer</span></div>
+          <div class="kv"><span class="k">education</span><span class="v">B.Sc. CS, Benha National University</span></div>
+          <div class="kv"><span class="k">focus</span><span class="v">Python · Django · FastAPI · REST APIs</span></div>
+          <div class="kv"><span class="k">status</span><span class="v">open to opportunities</span></div>
         </div>
       </div>
-      <img
-        src="./assets/arrow.png"
-        alt="Arrow icon"
-        class="icon arrow"
-        onclick="location.href='./#experience'"
-      />
     </section>
+
     <section id="experience">
-      <p class="section__text__p1">Explore My</p>
-      <h1 class="title">Experience</h1>
-      <div class="experience-details-container">
-        <div class="about-containers">
-          <div class="details-container">
-            <h2 class="experience-sub-title">Backend Development</h2>
-            <div class="article-container">
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>Python</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>C++</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>Dart</h3>
-                  <p>Intermediate</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>JavaScript</h3>
-                  <p>Basic</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>PHP</h3>
-                  <p>Basic</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>Django</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
-            </div>
-          </div>
-          <div class="details-container">
-            <h2 class="experience-sub-title">Backend Development</h2>
-            <div class="article-container">
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>Django Rest Framework</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>HTML</h3>
-                  <p>Intermediate</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>CSS</h3>
-                  <p>Intermediate</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>MySQL, SQLite</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>HTTP/HTTPs</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>Git & Github</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
-            </div>
-          </div>
+      <div class="endpoint-tag"><span class="method get">GET</span> <span class="path">/skills</span></div>
+      <h2>Skills</h2>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <h3>Languages</h3>
+          <div class="skill-row">Python <span class="level exp">Experienced</span></div>
+          <div class="skill-row">C++ <span class="level exp">Experienced</span></div>
+          <div class="skill-row">Dart <span class="level mid">Intermediate</span></div>
+          <div class="skill-row">JavaScript <span class="level basic">Basic</span></div>
+          <div class="skill-row">PHP <span class="level basic">Basic</span></div>
+        </div>
+        <div class="skill-card">
+          <h3>Backend &amp; Frameworks</h3>
+          <div class="skill-row">Django <span class="level exp">Experienced</span></div>
+          <div class="skill-row">Django REST Framework <span class="level exp">Experienced</span></div>
+          <div class="skill-row">FastAPI <span class="level mid">Intermediate</span></div>
+          <div class="skill-row">HTTP / HTTPS <span class="level exp">Experienced</span></div>
+        </div>
+        <div class="skill-card">
+          <h3>Data &amp; Tools</h3>
+          <div class="skill-row">MySQL, SQLite <span class="level exp">Experienced</span></div>
+          <div class="skill-row">Git &amp; GitHub <span class="level exp">Experienced</span></div>
+          <div class="skill-row">HTML <span class="level mid">Intermediate</span></div>
+          <div class="skill-row">CSS <span class="level mid">Intermediate</span></div>
         </div>
       </div>
-      <img
-        src="./assets/arrow.png"
-        alt="Arrow icon"
-        class="icon arrow"
-        onclick="location.href='./#projects'"
-      />
     </section>
+
     <section id="projects">
-      <div class="projects-header">
-        <p class="section__text__p1">Browse My Recent</p>
-        <h1 class="title">Projects</h1>
+      <div class="endpoint-tag"><span class="method get">GET</span> <span class="path">/projects</span></div>
+      <h2>Projects</h2>
+      <!-- ===== EDIT HERE =====
+           To ADD a project: copy one whole block from
+           <div class="project-card"> down to its closing </div>
+           and paste it inside .projects-grid, then edit the text and link.
+           To DELETE a project: delete its whole <div class="project-card">...</div> block. -->
+      <div class="projects-grid">
+
+        <div class="project-card">
+          <div class="project-top">
+            <h3>Kalamna — AI Customer Support Platform</h3>
+            <span class="status-code">200 OK</span>
+          </div>
+          <p>Graduation project: a multi-tenant SaaS platform letting businesses embed an AI support chat widget built specifically for Egyptian colloquial Arabic.</p>
+          <div class="project-meta"><span>FastAPI · PostgreSQL · Redis · RAG</span><a href="https://kalamna.tech" target="_blank" rel="noopener">visit site →</a></div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-top">
+            <h3>To Do List Web App</h3>
+            <span class="status-code">200 OK</span>
+          </div>
+          <p>A full-stack web application for managing daily tasks, built with Django and a SQLite database.</p>
+          <div class="project-meta"><span>Django · HTML/CSS · SQLite</span><a href="https://github.com/shahdamohamed/to-do-list">repo →</a></div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-top">
+            <h3>Cinema Tickets Reservation API</h3>
+            <span class="status-code">200 OK</span>
+          </div>
+          <p>A RESTful API for booking cinema tickets with user authentication, JWT + OTP verification, and Stripe payments.</p>
+          <div class="project-meta"><span>DRF · JWT · Stripe</span><a href="https://github.com/shahdamohamed/cinema-reservation">repo →</a></div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-top">
+            <h3>Event Booking System</h3>
+            <span class="status-code">200 OK</span>
+          </div>
+          <p>A RESTful API for an event booking system with JWT authentication and JSON-based APIs.</p>
+          <div class="project-meta"><span>DRF · JWT · SQLite</span><a href="https://github.com/shahdamohamed/event-booking">repo →</a></div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-top">
+            <h3>Store Management System</h3>
+            <span class="status-code">200 OK</span>
+          </div>
+          <p>A database system built with MySQL for comprehensive store management, with data integrity constraints.</p>
+          <div class="project-meta"><span>MySQL · SQL</span><a href="https://github.com/shahdamohamed/store_managment_system">repo →</a></div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-top">
+            <h3>Ping Pong Game</h3>
+            <span class="status-code">200 OK</span>
+          </div>
+          <p>A classic two-player Ping Pong game built with Python and the Turtle library, with smooth controls and score tracking.</p>
+          <div class="project-meta"><span>Python · Turtle Graphics</span><a href="https://github.com/shahdamohamed/ping-pong-game">repo →</a></div>
+        </div>
+
       </div>
-      
-      <div class="projects-list">
-        <div class="project-item" data-category="web">
-          <div class="project-header-list">
-            <div class="project-title-info">
-              <h3 class="project-title">To Do List Web App</h3>
-              <span class="project-category">Web Application</span>
-            </div>
-          </div>
-          
-          <p class="project-description">
-            A Full Stack Web Application Designed For Managing Daily Tasks.
-          </p>
-          
-          <div class="project-details">
-            <div class="project-tech-list">
-              <h4>Technologies Used:</h4>
-              <div class="tech-tags">
-                <span class="tech-tag">Backend: Django (Python)</span>
-                <span class="tech-tag">Frontend: HTML, CSS</span>
-                <span class="tech-tag">Database: SQLite</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="project-actions">
-            <a href="https://github.com/shahdamohamed/to-do-list" class="project-btn secondary">GitHub</a>
-          </div>
-        </div>
-
-        <div class="project-item" data-category="backend">
-          <div class="project-header-list">
-            <div class="project-title-info">
-              <h3 class="project-title">Cinema Tickets Reservation API</h3>
-              <span class="project-category">Backend System</span>
-            </div>
-          </div>
-          
-          <p class="project-description">
-            A RESTful API To Book Tickets for Cinema, and User Authentication
-          </p>
-          
-          <div class="project-details">
-            <div class="project-tech-list">
-              <h4>Technologies Used:</h4>
-              <div class="tech-tags">
-                <span class="tech-tag">Django REST Framework</span>
-                <span class="tech-tag">SQLite</span>
-                <span class="tech-tag">JWT + OTP</span>
-                <span class="tech-tag">Stripe Payments</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="project-actions">
-            <a href="https://github.com/shahdamohamed/cinema-reservation" class="project-btn secondary">GitHub</a>
-          </div>
-        </div>
-
-        <div class="project-item" data-category="web">
-          <div class="project-header-list">
-            <div class="project-title-info">
-              <h3 class="project-title">Event Booking System</h3>
-              <span class="project-category">Web Application</span>
-            </div>
-          </div>
-          
-          <p class="project-description">
-           A RESTful API for Event Booking System, with JWT Authentication
-          </p>
-          
-          <div class="project-details">
-            <div class="project-tech-list">
-              <h4>Technologies Used:</h4>
-              <div class="tech-tags">
-                <span class="tech-tag">Django REST Framework</span>
-                <span class="tech-tag">JWT Authentication</span>
-                <span class="tech-tag">SQLite</span>
-                <span class="tech-tag">JSON APIs</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="project-actions">
-            <a href="https://github.com/shahdamohamed/event-booking" class="project-btn secondary">GitHub</a>
-          </div>
-        </div>
-
-        <div class="project-item" data-category="database">
-          <div class="project-header-list">
-            <div class="project-title-info">
-              <h3 class="project-title">Store Management System</h3>
-              <span class="project-category">Database System</span>
-            </div>
-          </div>
-          
-          <p class="project-description">
-            A Database system using MySQL for comprehensive store management.
-          </p>
-          
-          <div class="project-details">
-            <div class="project-tech-list">
-              <h4>Technologies Used:</h4>
-              <div class="tech-tags">
-                <span class="tech-tag">MySQL</span>
-                <span class="tech-tag">SQL</span>
-                <span class="tech-tag">Data Integrity</span>
-                <span class="tech-tag">Constraints</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="project-actions">
-            <a href="https://github.com/shahdamohamed/store_managment_system" class="project-btn secondary">GitHub</a>
-          </div>
-        </div>
-
-        <div class="project-item" data-category="game">
-          <div class="project-header-list">
-            <div class="project-title-info">
-              <h3 class="project-title">Ping Pong Game</h3>
-              <span class="project-category">Game Development</span>
-            </div>
-          </div>
-          
-          <p class="project-description">
-            A classic Ping Pong game developed using Python and the Turtle library. Features two-player gameplay with smooth controls and score tracking.
-          </p>
-          
-          <div class="project-details">
-            <div class="project-tech-list">
-              <h4>Technologies Used:</h4>
-              <div class="tech-tags">
-                <span class="tech-tag">Python</span>
-                <span class="tech-tag">Turtle Graphics</span>
-                <span class="tech-tag">Game Logic</span>
-                <span class="tech-tag">Event Handling</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="project-actions">
-            <a href="https://github.com/shahdamohamed/ping-pong-game" class="project-btn secondary">GitHub</a>
-          </div>
-        </div>
-      </div>
-      
-      <img
-        src="./assets/arrow.png"
-        alt="Arrow icon"
-        class="icon arrow"
-        onclick="location.href='./#contact'"
-      />
     </section>
+
     <section id="contact">
-      <p class="section__text__p1">Get in Touch</p>
-      <h1 class="title">Contact Me</h1>
-      <div class="contact-info-upper-container">
-        <div class="contact-info-container">
-          <a href="mailto:shahdamohamedabotalb@gmail.com" target="_blank">
-            <img
-            src="./assets/email(2).png"
-            alt="Email icon"
-            class="icon contact-icon"
-          />
-          </a>
-        </div>
-        <div class="contact-info-container">
-          <a href="https://www.linkedin.com/in/shahda-mohamed-178537280?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank">
-            <img
-            src="./assets/linkedin.png"
-            alt="LinkedIn icon"
-            class="icon contact-icon"
-          />
-          </a>
-        </div>
-        <div class="contact-info-container">
-          <a href="https://www.facebook.com/share/1JW3SmUKF9/?mibextid=wwXIfr" target="_blank">
-            <img
-            src="https://img.icons8.com/?size=100&id=118467&format=png&color=000000"
-            alt="Facebook icon"
-            class="icon contact-icon"
-          />
-          </a>
-          
-        </div>
-        <div class="contact-info-container">
-          <a href="https://www.instagram.com/shahda2212?igsh=MTd3MHoxcGQ0bTNjbw%3D%3D&utm_source=qr" target="_blank">
-            <img
-            src="https://img.icons8.com/?size=100&id=32309&format=png&color=000000"
-            alt="Instagram icon"
-            class="icon contact-icon"
-          />
-          </a>
-        </div>
-        <div class="contact-info-container">
-          <a href="https://x.com/shahda_2212?s=21" target="_blank">
-            <img
-            src="https://img.icons8.com/?size=100&id=phOKFKYpe00C&format=png&color=000000"
-            alt="X icon"
-            class="icon contact-icon"
-          />
-          </a>
+      <div class="endpoint-tag"><span class="method post">POST</span> <span class="path">/contact</span></div>
+      <h2>Get in touch</h2>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <p>Have a backend role, a project, or a question? I'd love to hear from you — feel free to reach out through any of these.</p>
+          <div class="contact-links">
+            <a href="mailto:shahdamohamedabotalb@gmail.com">↳ shahdamohamedabotalb@gmail.com</a>
+            <a href="https://www.linkedin.com/in/shahda-mohamed-178537280" target="_blank" rel="noopener">↳ LinkedIn</a>
+            <a href="https://github.com/shahdamohamed" target="_blank" rel="noopener">↳ GitHub</a>
+            <a href="https://www.facebook.com/share/1JW3SmUKF9/" target="_blank" rel="noopener">↳ Facebook</a>
+            <a href="https://www.instagram.com/shahda2212" target="_blank" rel="noopener">↳ Instagram</a>
+            <a href="https://x.com/shahda_2212" target="_blank" rel="noopener">↳ X (Twitter)</a>
+          </div>
         </div>
       </div>
     </section>
+
     <footer>
-      <nav>
-        <div class="nav-links-container">
-          <ul class="nav-links">
-            <li><a href="#about">About</a></li>
-            <li><a href="#experience">Experience</a></li>
-            <li><a href="#projects">Projects</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-        </div>
-      </nav>
+      <span>© 2026 Shahda Mohamed</span>
+      <span>Backend Developer · Cairo, Egypt</span>
     </footer>
-    <script src="script.js"></script>
-  </body>
+  </main>
+</div>
+
+<script>
+  // Mobile nav toggle
+  const toggle = document.getElementById('menuToggle');
+  const navList = document.getElementById('navList');
+  if(toggle){
+    toggle.addEventListener('click', () => {
+      const open = navList.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', open);
+    });
+  }
+
+  // Terminal typing animation
+  const term = document.getElementById('termBody');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const finalHTML = [
+    '<p class="line"><span class="prompt">$</span> <span class="cmd">curl -s api.shahdamohamed.dev/v1/developer | jq</span></p>',
+    '<p class="line">{</p>',
+    '<p class="line">&nbsp;&nbsp;<span class="out-key">"name"</span>: <span class="out-string">"Shahda Mohamed"</span>,</p>',
+    '<p class="line">&nbsp;&nbsp;<span class="out-key">"role"</span>: <span class="out-string">"Backend Developer"</span>,</p>',
+    '<p class="line">&nbsp;&nbsp;<span class="out-key">"stack"</span>: [<span class="out-string">"Django"</span>, <span class="out-string">"FastAPI"</span>, <span class="out-string">"MySQL"</span>],</p>',
+    '<p class="line">&nbsp;&nbsp;<span class="out-key">"status"</span>: <span class="out-string">"available"</span></p>',
+    '<p class="line">}</p>',
+    '<p class="line"><span class="prompt">$</span> <span class="cursor"></span></p>'
+  ];
+
+  if(reduceMotion){
+    term.innerHTML = finalHTML.join('');
+  } else {
+    let i = 0;
+    function revealNext(){
+      if(i < finalHTML.length){
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = finalHTML[i];
+        term.appendChild(wrapper.firstChild);
+        i++;
+        setTimeout(revealNext, i === 1 ? 700 : 260);
+      }
+    }
+    revealNext();
+  }
+</script>
+
+</body>
 </html>
