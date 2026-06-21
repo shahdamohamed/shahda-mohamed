@@ -28,6 +28,27 @@
     --font-mono:'JetBrains Mono',monospace;
   }
 
+  /* ===== DARK THEME =====
+     These variables override the light ones above whenever
+     <html data-theme="dark"> is set (done by the toggle button / JS below).
+     Edit colors here if you want to tweak the dark palette. */
+  html[data-theme="dark"]{
+    --bg:#0F1316;
+    --surface:#181D22;
+    --ink:#ECEDEE;
+    --ink-soft:#9AA3AA;
+    --line:#262C32;
+    --accent:#3FBE9B;
+    --accent-soft:#1B3A33;
+    --accent-ink:#3fbe9b33;
+    --warn:#E0B26A;
+    --warn-soft:#3A2E18;
+    --code-bg:#0A0D10;
+    --code-text:#D9E6E1;
+    --code-key:#7FBFAE;
+    --code-string:#E2C08D;
+  }
+
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{
@@ -36,6 +57,7 @@
     color:var(--ink);
     font-family:var(--font-body);
     line-height:1.55;
+    transition:background .2s ease, color .2s ease;
   }
   @media (prefers-reduced-motion: reduce){
     html{scroll-behavior:auto;}
@@ -100,6 +122,23 @@
     border:1px solid var(--line);
   }
 
+  /* ===== Theme toggle button ===== */
+  .theme-toggle{
+    font-family:var(--font-mono);
+    font-size:12px;
+    background:var(--surface);
+    color:var(--ink-soft);
+    border:1px solid var(--line);
+    border-radius:99px;
+    padding:7px 12px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .theme-toggle:hover{border-color:var(--accent); color:var(--accent);}
+
   .nav-list{
     list-style:none;
     margin:0;padding:0;
@@ -137,6 +176,7 @@
     border-radius:var(--radius);
     padding:6px 10px;
     cursor:pointer;
+    color:var(--ink);
   }
   @media (max-width:880px){ .menu-toggle{display:inline-flex;} }
 
@@ -302,7 +342,7 @@
   .response-card .resp-status{color:var(--accent); font-weight:600; margin-bottom:14px; display:block;}
 
   /* ===== EDIT HERE: this is your main profile photo =====
-     Replace src="assets/profile.jpg" with your own image path. */
+     Replace src="assets/profile.jpeg" with your own image path. */
   .avatar-frame{
     width:150px; height:150px;
     border-radius:50%;
@@ -365,7 +405,7 @@
   }
   .level.exp{background:var(--accent-soft); color:var(--accent);}
   .level.mid{background:var(--warn-soft); color:var(--warn);}
-  .level.basic{background:#EFEFEC; color:var(--ink-soft);}
+  .level.basic{background:var(--surface); color:var(--ink-soft); border:1px solid var(--line);}
 
   /* ---------- Projects ---------- */
   /* ===== EDIT HERE: to ADD a project, copy one whole
@@ -422,7 +462,7 @@
 
 <div class="shell">
   <aside class="sidebar">
-    <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+    <div style="display:flex; align-items:center; justify-content:space-between; width:100%; gap:8px;">
       <div class="brand">
         <!-- EDIT: small avatar, optional. Swap src or delete the img tag. -->
         <img src="assets/profile.jpeg" alt="Shahda Mohamed">
@@ -430,6 +470,12 @@
       </div>
       <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="navList">menu</button>
     </div>
+
+    <!-- ===== Theme toggle button ===== -->
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light and dark theme">
+      <span id="themeIcon">☾</span> <span id="themeLabel">Dark mode</span>
+    </button>
+
     <ul class="nav-list" id="navList">
       <li><a href="#about"><span class="method get">GET</span> /about</a></li>
       <li><a href="#experience"><span class="method get">GET</span> /skills</a></li>
@@ -624,6 +670,34 @@
       toggle.setAttribute('aria-expanded', open);
     });
   }
+
+  // ===== Light / dark theme toggle =====
+  // No saved preference is stored between visits (keeps this file
+  // dependency-free) — it just follows the visitor's system setting
+  // on load, and they can flip it manually with the button.
+  const root = document.documentElement;
+  const themeBtn = document.getElementById('themeToggle');
+  const themeIcon = document.getElementById('themeIcon');
+  const themeLabel = document.getElementById('themeLabel');
+
+  function applyTheme(theme){
+    root.setAttribute('data-theme', theme);
+    if(theme === 'dark'){
+      themeIcon.textContent = '☀';
+      themeLabel.textContent = 'Light mode';
+    } else {
+      themeIcon.textContent = '☾';
+      themeLabel.textContent = 'Dark mode';
+    }
+  }
+
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(prefersDark ? 'dark' : 'light');
+
+  themeBtn.addEventListener('click', () => {
+    const current = root.getAttribute('data-theme');
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+  });
 
   // Terminal typing animation
   const term = document.getElementById('termBody');
